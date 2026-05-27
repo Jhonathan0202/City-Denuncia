@@ -1,0 +1,6 @@
+header nav ul::after {
+    transition: all 0.3s ease;
+}
+header nav a {
+    transition: color 0.3s ease;
+}

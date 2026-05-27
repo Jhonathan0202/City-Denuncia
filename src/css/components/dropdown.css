@@ -1,0 +1,113 @@
+div.dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 40px;
+    position: relative;
+    font-family: var(--sans);
+    background-color: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+    &:focus {
+        outline: 2px solid var(--accent);
+    }
+}
+
+div.dropdown-container > .dropdown-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+.dropdown-control > .chevrons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.chevrons > .chevron {
+    width: 100%;
+    height: 100%;
+}
+
+.dropdown-placeholder {
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dropdown-placeholder.selected {
+    color: var(--text);
+}
+
+.dropdown-list {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    visibility: hidden;
+    list-style: none;
+    width: 200px;
+    top: 100%;
+    left: 0;
+    z-index: 10;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    margin-top: 0.25rem;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    min-width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.dropdown-list.open {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    visibility: visible;
+}
+
+.item {
+    cursor: pointer;
+    list-style: none;
+    max-width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: var(--small);
+    transition: background-color 0.2s ease;
+    font-family: var(--sans);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:focus,
+    &.focused {
+        outline: 2px solid var(--accent);
+    }
+
+    &.selected {
+        font-weight: bold;
+    }
+}
+
+.item:hover,
+.item[aria-selected="true"],
+.item.active {
+    background-color: #f0f8ff;
+}
