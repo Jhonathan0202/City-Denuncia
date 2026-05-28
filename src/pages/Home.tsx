@@ -230,7 +230,7 @@ const Home = (): JSX.Element => {
                         }
                     </div>
                     <div>
-                        <label htmlFor="problem-location">
+                        <label htmlFor="problem-description">
                             Descrição Detalhada *
                         </label>
                         <textarea
@@ -251,6 +251,7 @@ const Home = (): JSX.Element => {
                         <div className="location-inputs">
                             <button
                                 type="button"
+                                id="problem-location"
                                 className="get-location"
                                 disabled={loadingLocation}
                                 onClick={ async () => {

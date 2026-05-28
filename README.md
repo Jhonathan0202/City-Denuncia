@@ -1,5 +1,4 @@
 # CityDenúncia
-dfgsgsdgsdg
 
 ## Construído com
 

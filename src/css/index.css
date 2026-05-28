@@ -9,9 +9,9 @@
     --bg: #ffffff;
     --border: #d1d5dc;
     --accent: #155dfc;
-    --accent-hover: #0348DD;
+    --accent-hover: #0348dd;
     --accent-alt: #8e00fb;
-    --accent-alt-hover: #7400CC;
+    --accent-alt-hover: #7400cc;
     --shadow:
         rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
@@ -38,7 +38,9 @@
     padding: 0;
 }
 
-p,label,span {
+p,
+label,
+span {
     font-family: var(--sans);
 }
 
@@ -58,6 +60,7 @@ header {
     display: flex;
     position: sticky;
     top: 0;
+    z-index: 100;
     align-items: center;
     justify-content: space-between;
     background-color: white;
@@ -68,15 +71,32 @@ header {
 header h1 {
     user-select: none;
     color: var(--accent);
-    flex-basis: 190px;
     font-family: var(--heading);
     font-size: 1.5rem;
 }
 
-header nav ul {
-    isolation: isolate;
-    list-style: none;
+header nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    border-top: 2px solid var(--border);
+    background-color: white;
+    padding: 10px;
+    width: 100%;
+}
+
+header nav.open {
     display: flex;
+}
+
+header nav ul {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    isolation: isolate;
+    width: 100%;
+    list-style: none;
     gap: 1rem;
 }
 
@@ -96,13 +116,25 @@ header nav ul::after {
 }
 
 header nav ul li {
+    flex: 1 0 250px;
     border-radius: 10px;
+    text-align: center;
     overflow: hidden;
 }
 
+header nav ul li svg {
+    width: 20px;
+    width: 20px;
+    fill: currentColor;
+}
+
 header nav a {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     color: var(--muted-text);
+    white-space: nowrap;
     font-weight: bold;
     width: 100%;
     height: 100%;
@@ -115,21 +147,21 @@ header nav a:not(.active):hover {
     background-color: #f6f3f4;
 }
 
-header nav li:has(a.active) {
-    anchor-name: --active-link;
-}
-
 header nav a.active {
     color: white;
 }
 
+header nav li:has(a.active) {
+    anchor-name: --active-link;
+}
+
 header div {
-    flex-basis: 190px;
     display: flex;
+    gap: 10px;
     justify-content: flex-end;
 }
 
-header div button {
+header div button.accont-icon {
     background-image: linear-gradient(135deg, var(--accent), var(--accent-alt));
     cursor: pointer;
     color: white;
@@ -140,12 +172,74 @@ header div button {
     border-radius: 50%;
 }
 
-header div button:hover {
-    background-image: linear-gradient(135deg, var(--accent-hover), var(--accent-alt-hover));
+header div button.accont-icon:hover {
+    background-image: linear-gradient(
+        135deg,
+        var(--accent-hover),
+        var(--accent-alt-hover)
+    );
 }
 
-header div button svg {
+button.accont-icon svg {
     width: 100%;
     height: 100%;
     fill: white;
+}
+
+header div button.burger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 35px;
+    height: 35px;
+    padding: 4px;
+    border: none;
+    border-radius: 8px;
+    background-color: transparent;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+button.burger:hover {
+    background: #f0f2ff;
+}
+
+header div button.burger span {
+    display: block;
+    height: 4px;
+    width: 100%;
+    background-color: var(--text);
+    border-radius: 2px;
+    transition: transform 0.25s, opacity 0.25s, width 0.25s;
+    transform-origin: center;
+}
+
+.burger.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+.burger.open span:nth-child(2) { opacity: 0; width: 0; }
+.burger.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+@media (min-width: 750px) {
+    header div {
+        justify-content: flex-end;
+    }
+
+    header nav {
+        display: flex;
+        position: initial;
+        border: none;
+    }
+
+    header nav ul {
+        flex-flow: row nowrap;
+    }
+
+    header nav ul li {
+        flex: 0 1 fit-content;
+    }
+
+    header div button.burger {
+        display: none;
+    }
 }

@@ -1,6 +1,7 @@
 div.dropdown-container {
     position: relative;
     display: inline-block;
+    isolation: isolate;
 }
 
 .dropdown-control {
@@ -66,7 +67,6 @@ div.dropdown-container > .dropdown-input {
     width: 200px;
     top: 100%;
     left: 0;
-    z-index: 10;
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 0.5rem;
