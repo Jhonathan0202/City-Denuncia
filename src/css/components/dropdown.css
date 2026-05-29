@@ -21,10 +21,6 @@ div.dropdown-container {
     transition:
         border-color 0.2s ease,
         box-shadow 0.2s ease;
-
-    &:focus {
-        outline: 2px solid var(--accent);
-    }
 }
 
 div.dropdown-container > .dropdown-input {

@@ -38,6 +38,10 @@
     padding: 0;
 }
 
+:focus {
+    outline: 2px solid var(--accent);
+}
+
 p,
 label,
 span {
@@ -81,7 +85,8 @@ header nav {
     top: 100%;
     left: 0;
     border-top: 2px solid var(--border);
-    background-color: white;
+    background-color: color-mix(in oklab, var(--bg) 70%, transparent 30%);
+    backdrop-filter: blur(2px);
     padding: 10px;
     width: 100%;
 }
@@ -119,7 +124,6 @@ header nav ul li {
     flex: 1 0 250px;
     border-radius: 10px;
     text-align: center;
-    overflow: hidden;
 }
 
 header nav ul li svg {
@@ -133,6 +137,7 @@ header nav a {
     align-items: center;
     justify-content: center;
     gap: 10px;
+    border-radius: 10px;
     color: var(--muted-text);
     white-space: nowrap;
     font-weight: bold;
@@ -229,6 +234,8 @@ header div button.burger span {
         display: flex;
         position: initial;
         border: none;
+        background-color: transparent;
+        backdrop-filter: none;
     }
 
     header nav ul {
