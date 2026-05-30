@@ -6,6 +6,7 @@ import {
     RouterProvider,
 } from "react-router-dom";
 import Home from "./pages/Home";
+import ConsultarDenuncias from "./pages/ConsultarDenuncias";
 import type { JSX } from "react";
 import Header from "./layout/Header";
 
@@ -19,7 +20,7 @@ function App(): JSX.Element {
     const route = createBrowserRouter(
         createRoutesFromElements(
             <Route path="/" element={<Header />}>
-                <Route index element={<Home />} />
+                <Route index element={<ConsultarDenuncias />} />
                 <Route path="criar-denuncia" element={<Home />} />
             </Route>,
         ),

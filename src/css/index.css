@@ -38,6 +38,14 @@
     padding: 0;
 }
 
+body,
+button,
+input,
+select,
+textarea {
+    font-family: Inter, Arial, Helvetica, sans-serif;
+}
+
 :focus {
     outline: 2px solid var(--accent);
 }
