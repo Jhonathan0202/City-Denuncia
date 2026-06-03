@@ -1,42 +1,46 @@
-import { type JSX, useEffect, useState } from "react";
+import { type JSX } from "react";
 import Dropdown from "../components/Dropdown";
-import { buscarDenuncias } from "../services/denunciaService";
 import type {
     Denuncia,
     DenunciaCategoria,
     DenunciaStatus,
 } from "../types/Denuncia";
 import "../css/consultar-denuncias.css";
-
-const categoryOptions = [
-    { label: "Todas", value: "Todas" },
-    { label: "Buraco na via", value: "Buraco na via" },
-    { label: "Esgoto", value: "Esgoto" },
-    { label: "Iluminação", value: "Iluminação" },
-    { label: "Sinalização", value: "Sinalização" },
-];
-
-const statusOptions = [
-    { label: "Todos", value: "Todos" },
-    { label: "Pendente", value: "Pendente" },
-    { label: "Em Análise", value: "Em Análise" },
-    { label: "Em Andamento", value: "Em Andamento" },
-    { label: "Resolvida", value: "Resolvida" },
-];
+import useConsultarDenuncias from "../hooks/useConsultarDenuncias";
 
 const ConsultarDenuncias = (): JSX.Element => {
-    const [search, setSearch] = useState<string>("");
-    const [categoria, setCategoria] = useState<DenunciaCategoria | "Todas">(
-        "Todas",
-    );
-    const [status, setStatus] = useState<DenunciaStatus | "Todos">("Todos");
-    const [denuncias, setDenuncias] = useState<Denuncia[]>([]);
+    const {
+        search,
+        categoria,
+        status,
+        denuncias,
+        loading,
+        categoryOptions,
+        statusOptions,
+        setSearch,
+        setCategoria,
+        setStatus,
+    } = useConsultarDenuncias();
 
-    useEffect((): void => {
-        void buscarDenuncias({ search, categoria, status }).then(setDenuncias);
-    }, [search, categoria, status]);
+    const quantidadeTexto = denuncias
+        ? `${denuncias.length} denúncia(s) encontrada(s)`
+        : "Nenhuma denúncia encontrada";
 
-    const quantidadeTexto = `${denuncias.length} denúncia(s) encontrada(s)`;
+    if(loading){
+        console.log("Carregando denúncias...")
+    } else {
+        console.log(`Denúncias carregadas: ${denuncias.length} denúncia(s) encontrada(s)`);
+    };
+    
+    if(loading) return (
+        <div className="consultar-denuncias-page">
+            <section className="query-header" aria-labelledby="query-title">
+                <h2 id="query-title">Consultar Denúncias</h2>
+                <p>Acompanhe os registros urbanos feitos pela comunidade.</p>
+            </section>
+            <p className="loading-text" aria-live="polite">Carregando denúncias...</p>
+        </div>
+    )
 
     return (
         <div className="consultar-denuncias-page">
