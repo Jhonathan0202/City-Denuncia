@@ -1,28 +1,12 @@
-import { type JSX, useEffect, useState } from "react";
+import { type JSX } from "react";
 import Dropdown from "../components/Dropdown";
-import { buscarDenuncias } from "../services/denunciaService";
 import type {
     Denuncia,
     DenunciaCategoria,
     DenunciaStatus,
 } from "../types/Denuncia";
 import "../css/consultar-denuncias.css";
-
-const categoryOptions = [
-    { label: "Todas", value: "Todas" },
-    { label: "Buraco na via", value: "Buraco na via" },
-    { label: "Esgoto", value: "Esgoto" },
-    { label: "Iluminação", value: "Iluminação" },
-    { label: "Sinalização", value: "Sinalização" },
-];
-
-const statusOptions = [
-    { label: "Todos", value: "Todos" },
-    { label: "Pendente", value: "Pendente" },
-    { label: "Em Análise", value: "Em Análise" },
-    { label: "Em Andamento", value: "Em Andamento" },
-    { label: "Resolvida", value: "Resolvida" },
-];
+import useConsultarDenuncias from "../hooks/useConsultarDenuncias";
 
 const ConsultarDenuncias = (): JSX.Element => {
     const [search, setSearch] = useState<string>("");
