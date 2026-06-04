@@ -16,7 +16,8 @@ export type Denuncia = {
     categoria: DenunciaCategoria;
     status: DenunciaStatus;
     descricao: string;
-    localizacao: string;
+    localizacao?: string;
+    endereco?: string;
     denunciante: string;
     registradoEm: string;
 };

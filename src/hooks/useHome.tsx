@@ -58,7 +58,7 @@ export default function useHome() {
     }
 
     const validate = (): boolean => {
-        let newErrors: FormErrors = {};
+        const newErrors: FormErrors = {};
 
         if(formData.category === "") {
             newErrors.category = "O campo de categoria é obrigatória!"
