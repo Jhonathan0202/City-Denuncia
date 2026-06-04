@@ -1,8 +1,11 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useState, type JSX } from "react";
+import { useAuth } from "../hooks/useAuth";
 
 const Header: React.FC = (): JSX.Element => {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+    const [isAccountMenuOpen, setIsAccountMenuOpen] = useState<boolean>(false);
+    const { loggedUser, logout } = useAuth();
 
     const accountIcon: JSX.Element = (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
@@ -26,34 +29,65 @@ const Header: React.FC = (): JSX.Element => {
         <>
             <header>
                 <h1>
-                    <span style={{ color: "black" }}>City</span>Denúncia
+                    <span style={{ color: "black" }}>City</span>Denuncia
                 </h1>
                 <nav className={isMenuOpen ? "open" : ""} id="main-navigation">
                     <ul>
                         <li>
                             <NavLink to="/criar-denuncia">
                                 {newComplaintIcon}
-                                Criar denúncia
+                                Criar denuncia
                             </NavLink>
                         </li>
                         <li>
                             <NavLink to="/">
                                 {queryComplaintsIcon}
-                                Consultar denúncias
+                                Consultar denuncias
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/minhas-denuncias">
+                                {queryComplaintsIcon}
+                                Minhas denuncias
                             </NavLink>
                         </li>
                     </ul>
                 </nav>
                 <div>
-                    <button
-                        aria-label="Configurações da conta"
-                        className="accont-icon"
-                    >
-                        {
-                            /* Ícone retirado do https://fonts.google.com/icons */
-                            accountIcon
-                        }
-                    </button>
+                    <div className="account-menu">
+                        <button
+                            aria-label={`Usuario logado: ${loggedUser?.name ?? "Conta"}`}
+                            aria-expanded={isAccountMenuOpen}
+                            aria-controls="account-dropdown"
+                            className="accont-icon"
+                            title={loggedUser?.name ?? "Conta"}
+                            type="button"
+                            onClick={() =>
+                                setIsAccountMenuOpen((prev) => !prev)
+                            }
+                        >
+                            {accountIcon}
+                        </button>
+                        {isAccountMenuOpen && (
+                            <div
+                                className="account-dropdown"
+                                id="account-dropdown"
+                                role="menu"
+                            >
+                                <span className="account-dropdown-name">
+                                    {loggedUser?.name ?? "Usuario"}
+                                </span>
+                                <button
+                                    className="logout-button"
+                                    type="button"
+                                    role="menuitem"
+                                    onClick={logout}
+                                >
+                                    Sair
+                                </button>
+                            </div>
+                        )}
+                    </div>
                     <button
                         className={`burger${isMenuOpen ? " open" : ""}`}
                         aria-label="menu"
@@ -71,4 +105,5 @@ const Header: React.FC = (): JSX.Element => {
         </>
     );
 };
+
 export default Header;

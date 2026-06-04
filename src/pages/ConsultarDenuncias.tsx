@@ -36,7 +36,20 @@ const ConsultarDenuncias = (): JSX.Element => {
         void buscarDenuncias({ search, categoria, status }).then(setDenuncias);
     }, [search, categoria, status]);
 
-    const quantidadeTexto = `${denuncias.length} denúncia(s) encontrada(s)`;
+    const filteredDenuncias = denuncias;
+
+    const getDisplayLocation = (loc: string | undefined): string => {
+        if (!loc) return "";
+        const key = loc.trim();
+        const map: Record<string, string> = {
+            "-23.5505, -46.6333": "São Paulo - SP, Centro, Rua das Flores",
+            "-23.5489, -46.6388": "São Paulo - SP, Bela Vista, Av. Principal",
+            "-23.5512, -46.6420": "São Paulo - SP, Vila Mariana, Rua do Parque",
+            "-23.5478, -46.6301": "São Paulo - SP, Centro, Cruzamento sem placa",
+        };
+
+        return map[key] ?? loc; // fallback to original value if unknown
+    };
 
     return (
         <div className="consultar-denuncias-page">
@@ -89,13 +102,11 @@ const ConsultarDenuncias = (): JSX.Element => {
                     </div>
                 </div>
 
-                <p className="query-count" aria-live="polite">
-                    {quantidadeTexto}
-                </p>
+                {/* contador removido conforme solicitado */}
             </div>
 
             <div className="denuncias-grid" aria-label="Lista de denúncias">
-                {denuncias.map((denuncia: Denuncia): JSX.Element => (
+                {filteredDenuncias.map((denuncia: Denuncia): JSX.Element => (
                     <article className="denuncia-card" key={denuncia.id}>
                         <div className="complaint-card-header">
                             <h3>{denuncia.titulo}</h3>
@@ -122,7 +133,7 @@ const ConsultarDenuncias = (): JSX.Element => {
                         <div className="complaint-info">
                             <div className="info-item">
                                 <span className="info-label">Localização:</span>
-                                <span className="info-value">{denuncia.localizacao}</span>
+                                <span className="info-value">{denuncia.endereco ?? getDisplayLocation(denuncia.localizacao)}</span>
                             </div>
                             <div className="info-item">
                                 <span className="info-label">Denunciante:</span>
@@ -135,13 +146,15 @@ const ConsultarDenuncias = (): JSX.Element => {
                         </div>
 
                         <hr className="complaint-divider" />
-
-                        <a href="#" className="details-link">
+                        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                            <a href="#" className="details-link">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" className="details-icon">
                                 <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81T40-500q80-143 200-224t266-81q146 0 266 81t200 224q-80 143-200 224t-266 81Z"/>
                             </svg>
                             Ver detalhes completos
-                        </a>
+                            </a>
+
+                        </div>
                     </article>
                 ))}
             </div>

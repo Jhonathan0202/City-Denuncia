@@ -1,4 +1,4 @@
-import { type JSX, useRef, useState } from "react";
+import { type JSX } from "react";
 import "../css/home.css";
 import useHome from "../hooks/useHome";
 import Dropdown from "../components/Dropdown";

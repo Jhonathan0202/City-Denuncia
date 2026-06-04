@@ -56,7 +56,7 @@ const Dropdown = (props: DropdownProps): JSX.Element => {
 
         switch(e.key) {
             case "ArrowUp":
-            case "Up":
+            case "Up": {
                 e.preventDefault();
                 if(e.altKey) {
                     select(props.options[activeIndex]);
@@ -66,15 +66,17 @@ const Dropdown = (props: DropdownProps): JSX.Element => {
                 const prevIndex: number = activeIndex <= 0 ? 0 : activeIndex - 1;
                 updateIndex(prevIndex);
                 break;
+            }
 
             case "ArrowDown":
-            case "Down":
+            case "Down": {
                 e.preventDefault();
                 
                 const nextIndex: number = activeIndex + 1 > lastIndex ? activeIndex : activeIndex + 1;
                 updateIndex(nextIndex);
                 
                 break;
+            }
 
             case "Home":
             case "PageUp":
