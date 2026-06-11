@@ -7,18 +7,23 @@ import type {
 } from "../types/Denuncia";
 import "../css/consultar-denuncias.css";
 import useConsultarDenuncias from "../hooks/useConsultarDenuncias";
+import { useNavigate } from "react-router-dom";
 
 const ConsultarDenuncias = (): JSX.Element => {
-    const [search, setSearch] = useState<string>("");
-    const [categoria, setCategoria] = useState<DenunciaCategoria | "Todas">(
-        "Todas",
-    );
-    const [status, setStatus] = useState<DenunciaStatus | "Todos">("Todos");
-    const [denuncias, setDenuncias] = useState<Denuncia[]>([]);
+    const {
+        search,
+        categoria,
+        status,
+        denuncias,
+        loading,
+        categoryOptions,
+        statusOptions,
+        setSearch,
+        setCategoria,
+        setStatus
+    } = useConsultarDenuncias();
 
-    useEffect((): void => {
-        void buscarDenuncias({ search, categoria, status }).then(setDenuncias);
-    }, [search, categoria, status]);
+    const navegate = useNavigate();
 
     const filteredDenuncias = denuncias;
 
@@ -34,6 +39,18 @@ const ConsultarDenuncias = (): JSX.Element => {
 
         return map[key] ?? loc; // fallback to original value if unknown
     };
+
+    if(loading) return (
+        <div className="consultar-denuncias-page">
+            <section className="query-header" aria-labelledby="query-title">
+                <h2 id="query-title">Consultar Denúncias</h2>
+                <p>Acompanhe os registros urbanos feitos pela comunidade.</p>
+            </section>
+            <div className="filters-card" aria-label="Filtros de denúncias">
+                Carregando...
+            </div>
+        </div>
+    );
 
     return (
         <div className="consultar-denuncias-page">
@@ -131,7 +148,7 @@ const ConsultarDenuncias = (): JSX.Element => {
 
                         <hr className="complaint-divider" />
                         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                            <a href="#" className="details-link">
+                            <a onClick={() => navegate(`denuncia/${denuncia.id}`)} className="details-link">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" className="details-icon">
                                 <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81T40-500q80-143 200-224t266-81q146 0 266 81t200 224q-80 143-200 224t-266 81Z"/>
                             </svg>

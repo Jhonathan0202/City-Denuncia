@@ -12,11 +12,13 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ResetPassword from "./pages/ResetPassword";
 import EditDenuncia from "./pages/EditDenuncia";
-import type { JSX } from "react";
+import DenunciaDetails from "./pages/DenunciaDetails";
+import { useState, useEffect, type JSX } from "react";
 import Header from "./layout/Header";
 import { Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthProvider";
 import { useAuth } from "./hooks/useAuth";
+import { type TokensService, ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "./types/User";
 
 const ProtectedRoute = (): JSX.Element => {
     const { loggedUser } = useAuth();
@@ -29,6 +31,30 @@ const ProtectedRoute = (): JSX.Element => {
 };
 
 function App(): JSX.Element {
+    const [tokens, setTokens] = useState<TokensService | undefined>(() => {
+        const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+        const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+
+        if (accessToken && refreshToken) {
+            return { accessToken, refreshToken };
+        }
+        return undefined;
+    });
+
+    useEffect(() => {
+        if(tokens?.accessToken) {
+            localStorage.setItem(ACCESS_TOKEN_KEY, tokens.accessToken)
+        } else {
+            localStorage.removeItem(ACCESS_TOKEN_KEY)
+        }
+
+        if(tokens?.refreshToken) {
+            localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken)
+        } else {
+            localStorage.removeItem(REFRESH_TOKEN_KEY)
+        }
+    }, [tokens]);
+
     if (matchMedia("(prefers-color-scheme: dark)").matches) {
         document.documentElement.classList.add("dark");
     } else {
@@ -40,15 +66,22 @@ function App(): JSX.Element {
             <>
                 <Route path="/" element={<ProtectedRoute />}>
                     <Route index element={<ConsultarDenuncias />} />
-                    <Route path="minhas-denuncias" element={<MinhasDenuncias />} />
-                    <Route path="criar-denuncia" element={<Home />} />
-                    <Route path="editar-denuncia/:id" element={<EditDenuncia />} />
+                    <Route
+                        path="minhas-denuncias"
+                        element={<MinhasDenuncias />}
+                    />
+                    <Route path="criar-denuncia" element={<Home  tokens={tokens} setTokens={setTokens} />} />
+                    <Route
+                        path="editar-denuncia/:id"
+                        element={<EditDenuncia />}
+                    />
+                    <Route path="denuncia/:id" element={<DenunciaDetails />} />
                 </Route>
 
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login tokens={tokens} setTokens={setTokens} />} />
+                <Route path="/register" element={<Register tokens={tokens} setTokens={setTokens} />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
-            </>
+            </>,
         ),
     );
 

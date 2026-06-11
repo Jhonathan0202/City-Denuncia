@@ -1,5 +1,7 @@
-import { type DragEvent, type ChangeEvent, useState, useRef } from "react";
+import { type DragEvent, type ChangeEvent, useState, useRef, type Dispatch, type SetStateAction } from "react";
 import * as Services from "../services/services";
+import type { TokensService } from "../types/User";
+import type { Denuncia } from "../types/Denuncia";
 
 type Location = {
     latitude: number,
@@ -15,7 +17,7 @@ type FormErrors = {
     images?: string,
 }
 
-type FormData = {
+type ComplaintData = {
     category: string,
     title: string,
     description: string,
@@ -23,11 +25,16 @@ type FormData = {
     images: FileList | null,
 }
 
-export default function useHome() {
+type UseHomeProps = {
+    tokens?: TokensService,
+    setTokens: Dispatch<SetStateAction<TokensService | undefined>>
+}
+
+export default function useHome({ tokens, setTokens }: UseHomeProps) {
     const [isLoadingLocation, setisLoadingLocation] = useState<boolean>(false);
     const [isDroping, setIsDroping] = useState<boolean>(false);
     const [formErrors, setFormErrors] = useState<FormErrors | null>(null);
-    const [formData, setFormData] = useState<FormData>({
+    const [formData, setFormData] = useState<ComplaintData>({
         category: "",
         description: "",
         images: null,
@@ -38,10 +45,77 @@ export default function useHome() {
 
     const handleSubmit = (): void => {
         if(validate()) {
-            Object.keys(formData).forEach((key) => {
-                console.log(`${key}: ${formData[key as keyof FormData]}`)
-            })
-            
+            (async () => {
+                if(tokens === undefined) return;
+                if(!tokens.accessToken || !tokens.refreshToken) return;
+                
+                const body = new FormData();
+                body.append("title", formData.title);
+                body.append("category", formData.category);
+                body.append("description", formData.description);
+                body.append("address", formData.location?.formated ?? "");
+
+                if (formData.images) {
+                    Array.from(formData.images).forEach((image) => {
+                        body.append("images", image);
+                    });
+                }
+
+                const responseComplaint = await fetch("https://localhost:8080/complaints", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${tokens.accessToken}`
+                    },
+                    body: body
+                });
+
+                if(!responseComplaint.ok) {
+                    const responseRefresh = await fetch("https://localhost:8080/refresh", {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${tokens.refreshToken}`
+                        },
+                        body: JSON.stringify({
+                            token: tokens.accessToken,
+                            refreshToken: tokens.refreshToken
+                        })
+                    });
+
+                    if(!responseRefresh.ok) {
+                        console.error("Os tokens não foram gerados!");
+                        return;
+                    }
+
+                    const dataTokens = await responseComplaint.json();
+                    
+                    const updatedTokens = {
+                        accessToken: dataTokens.token ?? null,
+                        refreshToken: dataTokens.refreshToken ?? null
+                    };
+
+                    setTokens(updatedTokens)
+
+                    if(!updatedTokens.accessToken) {
+                        console.error("Os tokens não foram gerados!");
+                        return;
+                    };
+
+                    const responseRemake = await fetch("https://localhost:8080/complaints", {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${updatedTokens.accessToken}`
+                        },
+                        body: body
+                    });
+
+                    if(!responseRemake.ok) {
+                        console.error("Não foi possivel cadastrar sua denúncia!");
+                    }
+                }
+                
+            })();
+
+            saveToLocalStorage();
         } else {
             console.log("Inválido")
         }
@@ -83,6 +157,26 @@ export default function useHome() {
         setFormErrors(newErrors);
 
         return Object.keys(newErrors).length === 0;
+    }
+
+    const saveToLocalStorage = (): void => {
+        const id = `local-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+        
+        const novaDenuncia: Denuncia = {
+            id,
+            titulo: formData.title,
+            categoria: formData.category as any,
+            status: "Pendente",
+            descricao: formData.description,
+            endereco: formData.location?.formated,
+            localizacao: formData.location?.formated,
+            denunciante: "Anônimo",
+            registradoEm: new Date().toLocaleString("pt-BR").replace(",", " às").substring(0,19)
+        };
+
+        const denunciasLocais = JSON.parse(localStorage.getItem("city-denuncia-denuncias") || "[]");
+        denunciasLocais.push(novaDenuncia);
+        localStorage.setItem("city-denuncia-denuncias", JSON.stringify(denunciasLocais));
     }
 
     const validFiles = (files: FileList | null): boolean => {
@@ -149,7 +243,7 @@ export default function useHome() {
         handleChange("location", newLocalization);
     }
 
-    const handleChange = <k extends keyof FormData>(key: k, value: FormData[k]) => {
+    const handleChange = <k extends keyof ComplaintData>(key: k, value: ComplaintData[k]) => {
         setFormErrors(prev => {
             const updated = { ...prev };
             delete updated[key];

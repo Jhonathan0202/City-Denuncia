@@ -1,8 +1,14 @@
-import type { JSX } from "react";
+import type { Dispatch, JSX, SetStateAction } from "react";
 import Login from "./Login";
+import { type TokensService } from "../types/User";
 
-const Register = (): JSX.Element => {
-    return <Login initialTab="register" />;
+type RegisterProps = {
+    tokens?: TokensService,
+    setTokens: Dispatch<SetStateAction<TokensService | undefined>>
+}
+
+const Register = ({ tokens, setTokens }: RegisterProps): JSX.Element => {
+    return <Login initialTab="register" tokens={tokens} setTokens={setTokens} />;
 };
 
 export default Register;

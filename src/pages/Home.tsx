@@ -1,9 +1,15 @@
-import { type JSX } from "react";
+import { type Dispatch, type JSX, type SetStateAction } from "react";
 import "../css/home.css";
 import useHome from "../hooks/useHome";
 import Dropdown from "../components/Dropdown";
+import type { TokensService } from "../types/User";
 
-const Home = (): JSX.Element => {
+type HomeProps = {
+    tokens?: TokensService,
+    setTokens: Dispatch<SetStateAction<TokensService | undefined>>
+}
+
+const Home = ({ tokens, setTokens }: HomeProps): JSX.Element => {
     const {
         isLoadingLocation,
         isDroping,
@@ -18,12 +24,12 @@ const Home = (): JSX.Element => {
         dragAndDrop,
         setIsDroping,
         addFile
-    } = useHome();
+    } = useHome({ tokens, setTokens });
 
     return (
         <main>
             <form
-                action={handleSubmit}//"/api/denuncia"
+                action={handleSubmit}
                 aria-labelledby="h1-compliments-form"
                 aria-describedby="p-compliments-form"
             >

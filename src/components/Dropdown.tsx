@@ -115,7 +115,7 @@ const Dropdown = (props: DropdownProps): JSX.Element => {
 
     return (
         <div className={`dropdown-container ${isOpen && "open"}`}>
-            <input type="text" name={props.id} id={`${props.id}-input`} className="dropdown-input" value={props.value} onReset={() => {
+            <input type="text" name={props.id} id={`${props.id}-input`} className="dropdown-input" defaultValue={props.value} onReset={() => {
                 setIsOpen(false);
                 setActiveDescendant(null);
                 setActiveIndex(-1);

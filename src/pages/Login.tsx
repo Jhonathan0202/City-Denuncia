@@ -1,4 +1,4 @@
-import type { FormEvent, JSX } from "react";
+import type { Dispatch, FormEvent, JSX, SetStateAction } from "react";
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import "../css/auth.css";
 import { useAuth } from "../hooks/useAuth";
-import type { RegisterUserData } from "../types/User";
+import type { RegisterUserData, TokensService } from "../types/User";
 
 type AuthTab = "login" | "register";
 
@@ -21,6 +21,8 @@ type AuthMessage = {
 };
 
 type LoginProps = {
+    tokens?: TokensService,
+    setTokens: Dispatch<SetStateAction<TokensService | undefined>>
     initialTab?: AuthTab;
 };
 
@@ -37,7 +39,7 @@ const emptyRegisterForm = {
 const isValidEmail = (email: string): boolean =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-const Login = ({ initialTab = "login" }: LoginProps): JSX.Element => {
+const Login = ({ initialTab = "login", tokens, setTokens }: LoginProps): JSX.Element => {
     const navigate = useNavigate();
     const { loggedUser, login, register } = useAuth();
     const [activeTab, setActiveTab] = useState<AuthTab>(initialTab);
@@ -110,6 +112,31 @@ const Login = ({ initialTab = "login" }: LoginProps): JSX.Element => {
         };
 
         try {
+            (async () => {
+                const response = await fetch("http://localhost:8080/register",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            name: userData.name,
+                            email: userData.email,
+                            password: userData.password
+                        })
+                    }
+                )
+
+                if(!response.ok) {
+                    console.error("Não foi possivel registrar o usuário!");
+                    return;
+                };
+
+                const data = await response.json();
+
+                console.log(data);
+                return;
+            })()
             register(userData);
             setRegisterForm(emptyRegisterForm);
             setActiveTab("login");
@@ -142,6 +169,38 @@ const Login = ({ initialTab = "login" }: LoginProps): JSX.Element => {
         }
 
         try {
+            (async () => {
+                try {
+                    const response = await fetch("http://localhost:8080/login",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                email: loginForm.email,
+                                password: loginForm.password
+                            })
+                        }
+                    )
+    
+                    if(!response.ok) {
+                        console.error("Não foi possivel realizar o login do usuário!");
+                        return;
+                    };
+    
+                    const data = await response.json();
+    
+                    setTokens({
+                        accessToken: data.token ?? null,
+                        refreshToken: data.refreshToken ?? null
+                    })
+                    return;
+                } catch (e) {
+                    console.error("Não foi possivel realizar o login do usuário!");
+                }
+            })();
+            
             login({
                 email: loginForm.email,
                 password: loginForm.password,

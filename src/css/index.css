@@ -299,7 +299,7 @@ header div button.burger span {
 .burger.open span:nth-child(2) { opacity: 0; width: 0; }
 .burger.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
-@media (min-width: 750px) {
+@media (min-width: 880px) {
     header div {
         justify-content: flex-end;
     }
